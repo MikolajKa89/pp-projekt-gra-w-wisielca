@@ -1,3 +1,5 @@
+package com.example.grawwisielca;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -8,12 +10,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -31,6 +29,7 @@ public class GrawWisielca extends Application {
     private Label attemptsLabel;
     private Label guessedLabel;
     private TextField guessField;
+    private TextField manualWordField;
 
     private String wordToGuess;
     private StringBuilder hiddenWord;
@@ -39,6 +38,14 @@ public class GrawWisielca extends Application {
 
     private Canvas canvas;
 
+    private Button guessButton;
+    private Button easyButton;
+    private Button mediumButton;
+    private Button hardButton;
+    private Button manualWordButton;
+    private Button statsButton;
+    private Button backButton;
+
     @Override
     public void start(Stage primaryStage) {
         initializeWords();
@@ -46,48 +53,108 @@ public class GrawWisielca extends Application {
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(10));
 
+        // Set background image
+        Image backgroundImage = new Image("file:library.jpg");
+        BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(100, 100, true, true, true, false));
+        root.setBackground(new Background(background));
+
         wordLabel = new Label();
         attemptsLabel = new Label();
         guessedLabel = new Label();
         guessField = new TextField();
-        Button guessButton = new Button("Guess");
+        guessField.setPromptText("Enter a letter");
+        guessButton = createStyledButton("Guess");
         guessButton.setOnAction(e -> makeGuess());
 
-        Button easyButton = new Button("Easy");
+        easyButton = createStyledButton("Easy");
         easyButton.setOnAction(e -> startNewGame("easy"));
 
-        Button mediumButton = new Button("Medium");
+        mediumButton = createStyledButton("Medium");
         mediumButton.setOnAction(e -> startNewGame("medium"));
 
-        Button hardButton = new Button("Hard");
+        hardButton = createStyledButton("Hard");
         hardButton.setOnAction(e -> startNewGame("hard"));
 
-        Button statsButton = new Button("Statistics");
+        manualWordButton = createStyledButton("Use Manual Word");
+        manualWordButton.setOnAction(e -> startNewGameWithManualWord());
+
+        statsButton = createStyledButton("Statistics");
         statsButton.setOnAction(e -> showStatistics());
 
-        HBox buttonBox = new HBox(10, easyButton, mediumButton, hardButton, statsButton);
-        buttonBox.setAlignment(Pos.CENTER);
+        backButton = createStyledButton("Back");
+        backButton.setOnAction(e -> showGameOptions());
+
+        manualWordField = new TextField();
+        manualWordField.setPromptText("Enter your word here");
+
+        VBox buttonBox = new VBox(10, easyButton, mediumButton, hardButton, manualWordButton, statsButton);
+        buttonBox.setAlignment(Pos.CENTER_LEFT);
+        buttonBox.setPadding(new Insets(20));
 
         HBox inputBox = new HBox(10, guessField, guessButton);
-        inputBox.setAlignment(Pos.CENTER);
+        inputBox.setAlignment(Pos.CENTER_LEFT);
 
-        VBox infoBox = new VBox(10, wordLabel, attemptsLabel, guessedLabel, inputBox, buttonBox);
-        infoBox.setAlignment(Pos.CENTER);
+        VBox infoBox = new VBox(10, wordLabel, attemptsLabel, guessedLabel, inputBox, manualWordField);
+        infoBox.setAlignment(Pos.CENTER_LEFT);
+
+        VBox leftBox = new VBox(20, buttonBox, infoBox);
+        leftBox.setAlignment(Pos.CENTER_LEFT);
+        leftBox.setPadding(new Insets(20));
 
         canvas = new Canvas(200, 200);
-        root.setRight(canvas);
+        VBox canvasBox = new VBox(canvas);
+        canvasBox.setAlignment(Pos.CENTER_RIGHT);
 
-        root.setCenter(infoBox);
+        HBox mainBox = new HBox(20, leftBox, canvasBox);
+        mainBox.setAlignment(Pos.CENTER_LEFT);
 
-        // Ustawienie koloru tła na niebieski
-        root.setBackground(new Background(new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
+        BorderPane.setAlignment(backButton, Pos.BOTTOM_RIGHT);
+        BorderPane.setMargin(backButton, new Insets(10));
+        root.setBottom(backButton);
+        root.setCenter(mainBox);
 
-        Scene scene = new Scene(root, 600, 300);
+        Scene scene = new Scene(root, 500, 400);  // Adjusted width to 500 to keep 1 cm padding
         primaryStage.setScene(scene);
         primaryStage.setTitle("Hangman Game");
         primaryStage.show();
 
-        startNewGame("easy");
+        showGameOptions();
+    }
+
+    private Button createStyledButton(String text) {
+        Button button = new Button(text);
+        button.setStyle("-fx-background-color: #2E2E2E; -fx-text-fill: white; -fx-font-size: 18px; -fx-padding: 10px 20px; -fx-border-radius: 10; -fx-background-radius: 10;");
+        return button;
+    }
+
+    private void showGameOptions() {
+        easyButton.setVisible(true);
+        mediumButton.setVisible(true);
+        hardButton.setVisible(true);
+        manualWordButton.setVisible(true);
+        statsButton.setVisible(true);
+        guessField.setVisible(false);
+        guessButton.setVisible(false);
+        manualWordField.setVisible(true);
+        wordLabel.setVisible(false);
+        attemptsLabel.setVisible(false);
+        guessedLabel.setVisible(false);
+        backButton.setVisible(false);
+    }
+
+    private void hideGameOptions() {
+        easyButton.setVisible(false);
+        mediumButton.setVisible(false);
+        hardButton.setVisible(false);
+        manualWordButton.setVisible(false);
+        statsButton.setVisible(false);
+        guessField.setVisible(true);
+        guessButton.setVisible(true);
+        manualWordField.setVisible(false);
+        wordLabel.setVisible(true);
+        attemptsLabel.setVisible(true);
+        guessedLabel.setVisible(true);
+        backButton.setVisible(true);
     }
 
     private void startNewGame(String difficulty) {
@@ -103,11 +170,23 @@ public class GrawWisielca extends Application {
                 break;
         }
 
+        hideGameOptions();
+        initializeGame();
+    }
+
+    private void startNewGameWithManualWord() {
+        wordToGuess = manualWordField.getText().trim().toLowerCase();
+        manualWordField.clear();
+        hideGameOptions();
+        initializeGame();
+    }
+
+    private void initializeGame() {
         hiddenWord = new StringBuilder();
         for (int i = 0; i < wordToGuess.length(); i++) {
             hiddenWord.append("_");
         }
-        attemptsLeft = 6;
+        attemptsLeft = wordToGuess.length() * 2;  // Liczba prób jest dwukrotnością liczby liter w słowie
         guessedLetters = new ArrayList<>();
 
         updateLabels();
@@ -122,36 +201,39 @@ public class GrawWisielca extends Application {
 
     private void makeGuess() {
         if (attemptsLeft > 0 && hiddenWord.toString().contains("_")) {
-            char guess = guessField.getText().charAt(0);
-            guessField.clear();
+            String guessInput = guessField.getText();
+            if (guessInput.length() == 1) {
+                char guess = guessInput.charAt(0);
+                guessField.clear();
 
-            if (guessedLetters.contains(guess)) {
-                // Already guessed
-                return;
-            }
-            guessedLetters.add(guess);
-
-            if (wordToGuess.contains(String.valueOf(guess))) {
-                for (int i = 0; i < wordToGuess.length(); i++) {
-                    if (wordToGuess.charAt(i) == guess) {
-                        hiddenWord.setCharAt(i, guess);
-                    }
+                if (guessedLetters.contains(guess)) {
+                    // Already guessed
+                    return;
                 }
-            } else {
-                attemptsLeft--;
-                drawHangman();
-            }
+                guessedLetters.add(guess);
 
-            updateLabels();
+                if (wordToGuess.contains(String.valueOf(guess))) {
+                    for (int i = 0; i < wordToGuess.length(); i++) {
+                        if (wordToGuess.charAt(i) == guess) {
+                            hiddenWord.setCharAt(i, guess);
+                        }
+                    }
+                } else {
+                    attemptsLeft--;
+                    drawHangman();
+                }
 
-            if (!hiddenWord.toString().contains("_")) {
-                totalWins++;
-                showWinMessage();
-                startNewGame("easy"); // Powrót do poziomu łatwego
-            } else if (attemptsLeft == 0) {
-                totalLosses++;
-                showLossMessage();
-                startNewGame("easy"); // Powrót do poziomu łatwego
+                updateLabels();
+
+                if (!hiddenWord.toString().contains("_")) {
+                    totalWins++;
+                    showWinMessage();
+                    showGameOptions();
+                } else if (attemptsLeft == 0) {
+                    totalLosses++;
+                    showLossMessage();
+                    showGameOptions();
+                }
             }
         }
     }

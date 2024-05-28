@@ -1,4 +1,5 @@
 package com.example.grawwisielca;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -6,15 +7,16 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
 import java.util.ArrayList;
 import java.util.Random;
+
 public class GrawWisielca extends Application {
     private final ArrayList<String> easyWords = new ArrayList<>();
     private final ArrayList<String> mediumWords = new ArrayList<>();
@@ -34,12 +36,13 @@ public class GrawWisielca extends Application {
     private Button easyButton;
     private Button mediumButton;
     private Button hardButton;
-    private Button WordButton;
+    private Button wordButton; // Poprawione na camelCase
     private Button statsButton;
     private Button backButton;
     private Scene gameOptionsScene;
     private Scene gameScene;
     private Stage primaryStage;
+
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -50,28 +53,27 @@ public class GrawWisielca extends Application {
         primaryStage.setTitle("Gra w Wisielca");
         primaryStage.show();
     }
+
     private void createGameOptionsScene() {
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(20));
-        Image backgroundImage = new Image("file:library.jpg");
-        BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(100, 100, true, true, true, false));
-        root.setBackground(new Background(background));
         easyButton = createStyledButton("Easy", false);
         easyButton.setOnAction(e -> startNewGame("easy"));
         mediumButton = createStyledButton("Medium", false);
         mediumButton.setOnAction(e -> startNewGame("medium"));
         hardButton = createStyledButton("Hard", false);
         hardButton.setOnAction(e -> startNewGame("hard"));
-        WordButton = createStyledButton("Use Word", false);
-        WordButton.setOnAction(e -> showManualWordDialog(primaryStage));
+        wordButton = createStyledButton("Use Word", false); // Poprawione na camelCase
+        wordButton.setOnAction(e -> showManualWordDialog(primaryStage));
         statsButton = createStyledButton("Statistics", false);
         statsButton.setOnAction(e -> showStatistics());
-        VBox buttonBox = new VBox(15, easyButton, mediumButton, hardButton, WordButton, statsButton);
+        VBox buttonBox = new VBox(15, easyButton, mediumButton, hardButton, wordButton, statsButton);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new Insets(0, 10, 0, 10));
         root.setCenter(buttonBox);
         gameOptionsScene = new Scene(root, 500, 500);
     }
+
     private void createGameScene() {
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(20));
@@ -103,11 +105,13 @@ public class GrawWisielca extends Application {
         root.setCenter(infoBox);
         gameScene = new Scene(root, 500, 500);
     }
+
     private void handleKeyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             makeGuess();
         }
     }
+
     private Button createStyledButton(String text, boolean isSmall) {
         Button button = new Button(text);
         String style = "-fx-background-color: #2E2E2E; -fx-text-fill: white; -fx-font-size: ";
@@ -119,6 +123,7 @@ public class GrawWisielca extends Application {
         button.setMinWidth(isSmall ? 75 : 150);
         return button;
     }
+
     private void startNewGame(String difficulty) {
         switch (difficulty) {
             case "easy":
@@ -134,6 +139,7 @@ public class GrawWisielca extends Application {
         initializeGame();
         primaryStage.setScene(gameScene);
     }
+
     private void showManualWordDialog(Stage parentStage) {
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -155,21 +161,24 @@ public class GrawWisielca extends Application {
         dialog.setScene(dialogScene);
         dialog.show();
     }
+
     private void initializeGame() {
         hiddenWord = new StringBuilder();
         for (int i = 0; i < wordToGuess.length(); i++) {
             hiddenWord.append("_");
         }
-        attemptsLeft = wordToGuess.length();
+        attemptsLeft = wordToGuess.length() * 2; // Zwiększono liczbę prób.
         guessedLetters = new ArrayList<>();
         updateLabels();
         clearCanvas();
     }
+
     private void updateLabels() {
         wordLabel.setText("Word: " + hiddenWord);
         attemptsLabel.setText("Attempts left: " + attemptsLeft);
         guessedLabel.setText("Guessed letters: " + guessedLetters);
     }
+
     private void makeGuess() {
         if (attemptsLeft > 0 && hiddenWord.toString().contains("_")) {
             String guessInput = guessField.getText();
@@ -203,6 +212,7 @@ public class GrawWisielca extends Application {
             }
         }
     }
+
     private void showWinMessage() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Congratulations!");
@@ -210,6 +220,7 @@ public class GrawWisielca extends Application {
         alert.setContentText("You won!");
         alert.showAndWait();
     }
+
     private void showLossMessage() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game Over");
@@ -217,6 +228,7 @@ public class GrawWisielca extends Application {
         alert.setContentText("You lost!");
         alert.showAndWait();
     }
+
     private void showStatistics() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Statistics");
@@ -224,6 +236,7 @@ public class GrawWisielca extends Application {
         alert.setContentText("Total Wins: " + totalWins + "\nTotal Losses: " + totalLosses);
         alert.showAndWait();
     }
+
     private void initializeWords() {
         easyWords.add("java");
         easyWords.add("code");
@@ -238,20 +251,22 @@ public class GrawWisielca extends Application {
         hardWords.add("developer");
         hardWords.add("hangman");
     }
+
     private String selectRandomWord(ArrayList<String> words) {
         Random rand = new Random();
         return words.get(rand.nextInt(words.size()));
     }
+
     private void clearCanvas() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
+
     private void drawHangman() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(2);
-        int maxAttempts = wordToGuess.length();
-        int mistakes = maxAttempts - attemptsLeft;
+        int mistakes = wordToGuess.length() * 2 - attemptsLeft; // Poprawiona logika błędów.
         switch (mistakes) {
             case 1:
                 gc.strokeLine(10, 190, 190, 190);
@@ -277,6 +292,7 @@ public class GrawWisielca extends Application {
                 break;
         }
     }
+
     public static void main(String[] args) {
         launch(args);
     }

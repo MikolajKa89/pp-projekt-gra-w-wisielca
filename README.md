@@ -38,7 +38,5 @@ Gra w Wisielca to klasyczna gra, w której użytkownik musi odgadnąć słowo po
 - JavaFX
 
 ### Uruchomienie Aplikacji
-1. Sklonuj repozytorium:
-   ```bash
-   git clone https://github.com/yourusername/Gra-w-Wisielca.git
-
+1. Sklonuj repozytorium
+https://github.com/MikolajKa89/pp-projekt-gra-w-wisielca.git

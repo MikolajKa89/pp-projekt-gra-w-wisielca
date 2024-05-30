@@ -1,4 +1,5 @@
 package com.example.grawwisielca;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -224,7 +225,7 @@ public class GrawWisielca extends Application {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game Over");
         alert.setHeaderText(null);
-        alert.setContentText("You lost!");
+        alert.setContentText("You lost! The word was: " + wordToGuess);
         alert.showAndWait();
     }
 
